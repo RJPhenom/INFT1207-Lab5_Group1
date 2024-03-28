@@ -15,11 +15,11 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 # Define test class
 class ShoppingTest:
-    def setup(self):
+    def setup(self, method):
         print("Setting up...")  # Debug print
         self.driver = webdriver.Firefox()
 
-    def teardown(self):
+    def teardown(self, method):
         print("Tearing down...")  # Debug print
         self.driver.quit()
 
@@ -189,7 +189,7 @@ class ShoppingTest:
         order_summary = self.driver.find_element(By.XPATH, order_summary_xpath)
         navigator.move_to_element(order_summary)
         order_summary.click()
-        sleep(5)
+        sleep(3)
 
         # Grab the element with the dress in it
         item_xpath = ("/html[1]/body[1]/div[2]/main[1]/div[2]/div[1]/div[3]/aside[1]/div[2]/div[1]/div[1]/div[1]"
@@ -199,10 +199,11 @@ class ShoppingTest:
         # Assert item text
         assert "Autumn Pullie" in item.text
 
-    def execute(self):
+    def execute(self, method):
         print("Executing...")  # Debug print
         self.driver.get("https://magento.softwaretestingboard.com")
         self.driver.set_window_size(1936, 1048)
+        sleep(1)
 
         # Instantiate our ActionChain
         navigator = ActionChains(self.driver)
@@ -221,7 +222,7 @@ if __name__ == "__main__":
     # Instantiate tester
     test = ShoppingTest()
 
-    test.setup()  # Setup
-    test.execute()  # Execute
-    test.teardown()  # Teardown
+    test.setup(None)  # Setup
+    test.execute(None)  # Execute all test cases
+    test.teardown(None)  # Teardown
 
