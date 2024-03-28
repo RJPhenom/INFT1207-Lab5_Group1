@@ -23,17 +23,7 @@ class ShoppingTest:
         print("Tearing down...")  # Debug print
         self.driver.quit()
 
-    def execute(self):
-        print("Executing...")  # Debug print
-        self.driver.get("https://magento.softwaretestingboard.com")
-        self.driver.set_window_size(1936, 1048)
-
-        # Instantiate our ActionChain
-        navigate = ActionChains(self.driver)
-
-        # TEST STEPS
-        # 1. NAVIGATING TO THE SECTION
-        # --------------------------------------------------------------------------------------------------------------
+    def test_navigate_to_category(self, navigator: ActionChains):
         # Click on Women -> Tops -> Hoodies & Sweatshirts
         # XPATHS
         primary_xpath = "/html[1]/body[1]/div[2]/div[1]/div[1]/div[2]/nav[1]/ul[1]/li[2]"
@@ -48,16 +38,15 @@ class ShoppingTest:
         target = self.driver.find_element(By.XPATH, target_xpath)  # Finds the target menu item
 
         # Navigate submenus to element
-        navigate.move_to_element(top_menu).perform()
-        navigate.move_to_element(sub_menu).perform()
-        navigate.move_to_element(offset).perform()
-        navigate.move_to_element(target).perform()
+        navigator.move_to_element(top_menu).perform()
+        navigator.move_to_element(sub_menu).perform()
+        navigator.move_to_element(offset).perform()
+        navigator.move_to_element(target).perform()
 
         # Click the link
         target.click()
 
-        # 2. SETTING OUR FILTERS
-        # --------------------------------------------------------------------------------------------------------------
+    def test_set_filters(self, navigator: ActionChains):
         # Select the appropriate Style, Size, Price Range, Color and Material. For e.g.:
         # Style: Pullover, Size: M, Price: $50.00 - $59.99, Color: Purple, Material: Polyester
 
@@ -70,10 +59,10 @@ class ShoppingTest:
         style = self.driver.find_element(By.XPATH, style_xpath)
         pullover = self.driver.find_element(By.XPATH, pullover_xpath)
 
-        navigate.move_to_element(style).perform()
+        navigator.move_to_element(style).perform()
         style.click()
 
-        navigate.move_to_element(pullover).perform()
+        navigator.move_to_element(pullover).perform()
         pullover.click()
         sleep(1)
 
@@ -86,10 +75,10 @@ class ShoppingTest:
         size = self.driver.find_element(By.XPATH, size_xpath)
         m = self.driver.find_element(By.XPATH, m_xpath)
 
-        navigate.move_to_element(size).perform()
+        navigator.move_to_element(size).perform()
         size.click()
 
-        navigate.move_to_element(m).perform()
+        navigator.move_to_element(m).perform()
         m.click()
         sleep(1)
 
@@ -102,10 +91,10 @@ class ShoppingTest:
         price = self.driver.find_element(By.XPATH, price_xpath)
         fifty = self.driver.find_element(By.XPATH, fifty_xpath)
 
-        navigate.move_to_element(price).perform()
+        navigator.move_to_element(price).perform()
         price.click()
 
-        navigate.move_to_element(fifty).perform()
+        navigator.move_to_element(fifty).perform()
         fifty.click()
         sleep(1)
 
@@ -118,10 +107,10 @@ class ShoppingTest:
         color = self.driver.find_element(By.XPATH, color_xpath)
         purple = self.driver.find_element(By.XPATH, purple_xpath)
 
-        navigate.move_to_element(color).perform()
+        navigator.move_to_element(color).perform()
         color.click()
 
-        navigate.move_to_element(purple).perform()
+        navigator.move_to_element(purple).perform()
         purple.click()
         sleep(1)
 
@@ -134,34 +123,105 @@ class ShoppingTest:
         material = self.driver.find_element(By.XPATH, material_xpath)
         polyester = self.driver.find_element(By.XPATH, polyester_xpath)
 
-        navigate.move_to_element(material).perform()
+        navigator.move_to_element(material).perform()
         material.click()
 
-        navigate.move_to_element(polyester).perform()
+        navigator.move_to_element(polyester).perform()
         polyester.click()
         sleep(1)
 
-        # 3.	Select any single dress (if there are multiple depending upon your selection) and click on Add to cart
+    def test_select_item(self, navigator: ActionChains):
+        # Select any single dress (if there are multiple depending upon your selection) and click on Add to cart
+        item_xpath = "/html[1]/body[1]/div[2]/main[1]/div[3]/div[1]/div[4]/ol[1]/li[1]/div[1]"
+        item = self.driver.find_element(By.XPATH, item_xpath)
 
-        # 5.	Click the “cart icon”.
+        navigator.move_to_element(item)
+        item.click()
+        sleep(3)
 
-        # 6.	Click on the “Proceed to Checkout” Button.
+        # Confirm style selections (this website should have been coded to do this based on filters... lame)
+        # Size...
+        size_option_xpath = ("/html[1]/body[1]/div[2]/main[1]/div[2]/div[1]/div[2]"
+                             "/div[4]/form[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[3]")
+        size_option = self.driver.find_element(By.XPATH, size_option_xpath)
+        navigator.move_to_element(size_option)
+        size_option.click()
+        sleep(1)
 
-        # 7.	Assert the “Ordersummary”. Your shopping cart should show the dress selected by you.
+        # Color...
+        color_option_xpath = ("/html[1]/body[1]/div[2]/main[1]/div[2]/div[1]/div[2]"
+                              "/div[4]/form[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[2]")
+        color_option = self.driver.find_element(By.XPATH, color_option_xpath)
+
+        navigator.move_to_element(color_option)
+        color_option.click()
+        sleep(1)
+
+        # Add to cart...
+        add_to_cart_xpath = ("/html[1]/body[1]/div[2]/main[1]/div[2]/div[1]/div[2]"
+                             "/div[4]/form[1]/div[2]/div[1]/div[1]/div[2]/button[1]")
+        add_to_cart = self.driver.find_element(By.XPATH, add_to_cart_xpath)
+        navigator.move_to_element(add_to_cart)
+        add_to_cart.click()
+        sleep(3)
+
+    def test_click_cart(self, navigator: ActionChains):
+        # Get cart path and click using navigator
+        cart_xpath = "/html[1]/body[1]/div[2]/header[1]/div[2]/div[1]/a[1]"
+        cart = self.driver.find_element(By.XPATH, cart_xpath)
+        navigator.move_to_element(cart)
+        cart.click()
+        sleep(1)
+
+    def test_proceed_to_checkout(self, navigator: ActionChains):
+        # Clicks 'Proceed to checkout'
+        proceed_to_checkout_xpath = ("/html[1]/body[1]/div[2]/header[1]/div[2]/div[1]"
+                                     "/div[1]/div[1]/div[1]/div[2]/div[3]/div[1]/button[1]")
+        proceed_to_checkout = self.driver.find_element(By.XPATH, proceed_to_checkout_xpath)
+        navigator.move_to_element(proceed_to_checkout)
+        proceed_to_checkout.click()
+        sleep(5)
+
+    def test_assert_order_summary(self, navigator: ActionChains):
+        # First expands the order summary
+        order_summary_xpath = ("/html[1]/body[1]/div[2]/main[1]/div[2]/div[1]/div[3]"
+                               "/aside[1]/div[2]/div[1]/div[1]/div[1]/div[1]")
+        order_summary = self.driver.find_element(By.XPATH, order_summary_xpath)
+        navigator.move_to_element(order_summary)
+        order_summary.click()
+        sleep(5)
+
+        # Grab the element with the dress in it
+        item_xpath = ("/html[1]/body[1]/div[2]/main[1]/div[2]/div[1]/div[3]/aside[1]/div[2]/div[1]/div[1]/div[1]"
+                             "/div[1]/div[2]/div[1]/ol[1]/li[1]/div[1]/div[1]/div[1]/div[1]/strong[1]")
+        item = self.driver.find_element(By.XPATH, item_xpath)
+
+        # Assert item text
+        assert "Autumn Pullie" in item.text
+
+    def execute(self):
+        print("Executing...")  # Debug print
+        self.driver.get("https://magento.softwaretestingboard.com")
+        self.driver.set_window_size(1936, 1048)
+
+        # Instantiate our ActionChain
+        navigator = ActionChains(self.driver)
+
+        # Execute individual test cases in sequence
+        self.test_navigate_to_category(navigator)  # Navigates to the category
+        self.test_set_filters(navigator)  # Sets filters
+        self.test_select_item(navigator)  # Selects the remaining item
+        self.test_click_cart(navigator)  # Clicks the upper right cart icon
+        self.test_proceed_to_checkout(navigator)  # Click the 'Proceed to Checkout' button
+        self.test_assert_order_summary(navigator)  # Expands order summary and asserts contents
 
 
-# PROGRAM
-# main
+# MAIN
 if __name__ == "__main__":
     # Instantiate tester
     test = ShoppingTest()
 
-    # Setup
-    test.setup()
-
-    # Test Execution
-    test.execute()
-
-    # Teardown
-    test.teardown()
+    test.setup()  # Setup
+    test.execute()  # Execute
+    test.teardown()  # Teardown
 
